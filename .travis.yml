@@ -1,0 +1,14 @@
+sudo: required
+language: node_js
+node_js:
+  - node
+branches:
+  only:
+    - master
+cache: yarn
+services:
+  - docker
+deploy:
+  skip_cleanup: true
+  provider: script
+  script: "./build"
