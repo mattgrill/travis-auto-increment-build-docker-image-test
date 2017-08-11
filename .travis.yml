@@ -1,14 +1,16 @@
-sudo: required
-language: node_js
-node_js:
-  - node
 branches:
   only:
     - master
 cache: yarn
-services:
-  - docker
-deploy:
-  skip_cleanup: true
-  provider: script
-  script: "./build"
+script:
+  - git checkout master
+  - git config --global user.email "travis@travis-ci.org"
+  - git config --global user.name "Travis CI"
+  - jq ".require[\"acquia/reservoir\"] = \"$RESERVOIR_BUILD_VERSION\"" composer.json >> composer.tmp
+  - mv composer.tmp composer.json
+  - git add composer.json
+  - git commit --message "Travis Build Number $TRAVIS_BUILD_NUMBER"
+  - git status
+  - git remote set-url origin https://mattgrill:$GH_TOKEN@github.com/mattgrill/travis-auto-increment-build-docker-image-test.git
+  - git push --set-upstream origin master
+  - echo -e "Done!\n"
